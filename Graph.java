@@ -1,15 +1,13 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Jai Fischer / COMP 272 001
  *
  *   Note, additional comments provided throughout this source code
  *   is for educational purposes
  *
  ********************************************************************/
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -105,6 +103,20 @@ public class Graph {
   public int findRoot() {
 
     // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME/SECTION AT TOP OF FILE
+    BitSet found = new BitSet(adjListArr.length);
+    found.set(0, adjListArr.length);
+    for(LinkedList<Integer> list : adjListArr){
+      for(Integer i : list) {
+        found.clear(i);
+      }
+    }
+
+    for(int i = 0; i < found.size(); i++){
+      if(found.get(i)) {
+        found.clear(i);
+        return found.isEmpty() ? vertexValues.get(i) : -1;
+      }
+    }
     return -1;
   } 
 }

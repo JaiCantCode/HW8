@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   ADD YOUR NAME / SECTION NUMBER HERE
+ *   Jai Fischer / COMP 272 001
  *
  *   This java file contains the problem solutions of canFinish and
  *   numGroups methods.
@@ -26,7 +26,7 @@ class ProblemSolutions {
      * in prerequisites. You want to avoid this embarrassment by making sure you define
      * a curriculum and exam schedule that can be completed.
      *
-     * You goal is to ensure that any student pursuing the certificate of 'master
+     * Your goal is to ensure that any student pursuing the certificate of 'master
      * programmer', can complete 'n' certification exams, each being specific to a
      * topic. Some exams have prerequisites of needing to take and pass earlier
      * certificate exams. You do not want to force any order of taking the exams, but
@@ -72,18 +72,26 @@ class ProblemSolutions {
      * @return boolean          - True if all exams can be taken, else false.
      */
 
-    public boolean canFinish(int numExams, 
-                             int[][] prerequisites) {
+    public boolean canFinish(int numExams, int[][] prerequisites) {
       
         int numNodes = numExams;  // # of nodes in graph
 
         // Build directed graph's adjacency list
-        ArrayList<Integer>[] adj = getAdjList(numExams, 
-                                        prerequisites); 
-
+        ArrayList<Integer>[] adj = getAdjList(numExams, prerequisites);
         // ADD YOUR CODE HERE - ADD YOUR NAME / SECTION AT TOP OF FILE
-        return false;
-
+        for (ArrayList<Integer> adjList : adj) {
+            for (int i : adjList) {
+                int cnt = 0;
+                while (cnt < numNodes) {
+                    int curNode = i;
+                    if (adj[curNode].isEmpty()) break;
+                    i = adj[curNode].get(0);
+                    cnt++;
+                }
+                if (cnt == numNodes) return false;
+            }
+        }
+        return true;
     }
 
 
@@ -98,7 +106,7 @@ class ProblemSolutions {
      * @return ArrayList<Integer>[]  - An adjacency list representing the provided graph.
      */
 
-    private ArrayList<Integer>[] getAdjList(
+    public ArrayList<Integer>[] getAdjList(
             int numNodes, int[][] edges) {
 
         ArrayList<Integer>[] adj 
@@ -189,10 +197,46 @@ class ProblemSolutions {
                 }
             }
         }
-
         // YOUR CODE GOES HERE - you can add helper methods, you do not need
         // to put all code in this method.
-        return -1;
+        BitSet visited = new BitSet(adjMatrix.length);
+        visited.clear();
+        int touched = 0;
+        for(int node : graph.keySet()){
+            visited.set(node);
+            touched += numberOfUniqueConnectedNodes(node,graph, visited);
+        }
+        return adjMatrix.length - touched;
     }
 
+    public int numberOfUniqueConnectedNodes(int node, Map<Integer,List<Integer>> graph, BitSet visited){
+        int num = 0;
+        Integer[] connectedEdges = visited(node, graph);
+        for(int i : connectedEdges){
+            if(!visited.get(i)) {
+                visited.set(i);
+                num += numberOfUniqueConnectedNodes(node,graph, visited) + 1;
+            }
+        }
+        return num;
+    }
+
+    public Integer[] visited(int node, Map<Integer,List<Integer>> graph){
+        BitSet visited = new BitSet(graph.size());
+        visited.clear();
+        visited.set(node);
+
+        for(int con : graph.get(node)){
+            if(!visited.get(con)) {
+                visited.set(con);
+            }
+        }
+        Stack<Integer> visitedNodes = new Stack<>();
+        for(int i = 0; i < visited.length(); i++) {
+            if(visited.get(i)){
+                visitedNodes.push(i);
+            }
+        }
+        return visitedNodes.toArray(new Integer[0]);
+    }
 }
